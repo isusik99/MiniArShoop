@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniArShoop</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Общие стили */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* Навигация */
+        nav ul {
+            display: flex;
+            justify-content: space-around;
+            list-style: none;
+            padding: 10px;
+            background: #333;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Каталог */
+        .catalog-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .product {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        
+        /* Корзина */
+        #cart {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        
+        /* Медиа-запрос для мобильных устройств */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .product {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MiniArShoop</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Главная</a></li>
+                <li><a href="#catalog">Каталог</a></li>
+                <li><a href="#cart">Корзина</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section id="catalog">
+        <h2>Каталог</h2>
+        <div class="catalog-controls">
+            <select id="category-filter" onchange="filterProducts()">
+                <option value="all">Все категории</option>
+                <option value="clothes">Одежда</option>
+                <option value="accessories">Аксессуары</option>
+            </select>
+            <input type="number" id="price-filter" placeholder="Макс. цена" oninput="filterProducts()">
+        </div>
+        <div class="product-list" id="product-list">
+            <div class="product" data-category="clothes" data-price="3500">
+                <img src="dress.jpg" alt="Платье">
+                <h3>Стильное платье</h3>
+                <p>Цена: 3 500 руб.</p>
+                <button onclick="addToCart('Стильное платье', 3500)">Добавить в корзину</button>
+            </div>
+            <div class="product" data-category="accessories" data-price="1500">
+                <img src="bag.jpg" alt="Сумка">
+                <h3>Модная сумка</h3>
+                <p>Цена: 1 500 руб.</p>
+                <button onclick="addToCart('Модная сумка', 1500)">Добавить в корзину</button>
+            </div>
+        </div>
+    </section>
+    
+    <section id="cart">
+        <h2>Корзина</h2>
+        <ul id="cart-items"></ul>
+        <p>Общая сумма: <span id="total-price">0</span> руб.</p>
+        <button onclick="clearCart()">Очистить корзину</button>
+        <button onclick="checkout()">Оформить заказ</button>
+    </section>
+    
+    <section id="contact">
+        <h2>Свяжитесь с нами</h2>
+        <form id="contact-form">
+            <label for="name">Имя:</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="message">Сообщение:</label>
+            <textarea id="message" name="message" required></textarea>
+            
+            <button type="submit">Отправить</button>
+        </form>
+        <p id="form-response"></p>
+    </section>
+    
+    <footer>
+        <p>&copy; 2025 MiniArShoop</p>
+    </footer>
+    
+    <script>
+        let cart = [];
+        
+        function addToCart(productName, price) {
+            cart.push({ name: productName, price: price });
+            updateCart();
+        }
+        
+        function updateCart() {
+            const cartItems = document.getElementById("cart-items");
+            const totalPrice = document.getElementById("total-price");
+            
+            cartItems.innerHTML = "";
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                let li = document.createElement("li");
+                li.textContent = `${item.name} - ${item.price} руб.`;
+                
+                let removeBtn = document.createElement("button");
+                removeBtn.textContent = "Удалить";
+                removeBtn.onclick = () => removeFromCart(index);
+                li.appendChild(removeBtn);
+                
+                cartItems.appendChild(li);
+                total += item.price;
+            });
+            
+            totalPrice.textContent = total;
+        }
+        
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+        
+        function clearCart() {
+            cart = [];
+            updateCart();
+        }
+        
+        function checkout() {
+            if (cart.length === 0) {
+                alert("Ваша корзина пуста!");
+            } else {
+                alert("Спасибо за заказ! Мы с вами свяжемся.");
+                clearCart();
+            }
+        }
+        
+        document.getElementById("contact-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            document.getElementById("form-response").textContent = "Спасибо за ваше сообщение! Мы свяжемся с вами в ближайшее время.";
+            this.reset();
+        });
+    </script>
+</body>
+</html>
